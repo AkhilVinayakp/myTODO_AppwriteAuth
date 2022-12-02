@@ -5,6 +5,8 @@ import 'react-toastify/dist/ReactToastify.css';
 import { useNavigate } from "react-router-dom";
 import { account } from "../appwrite/config";
 import { ID } from "appwrite";
+import axios from "axios";
+import { API } from "../backend";
 
 const Home = (props)=>{
     
@@ -39,17 +41,25 @@ const Home = (props)=>{
             name
         ).then(
                 response =>{
-                    console.log(response);
                     setName("");
                     setPassword("");
                     setEmail("");
                     const toggler = document.querySelector(".container_home");
                     toggler.classList.remove("active");
-                }
-            ).catch(err=>{
+                    // The following is to create a copy request is to create a copy of new user in mongodb express app
+                    // todoes will not be loaded/saved if the user existed in the database.
+                    axios.post(`${API.userApi}/register`,{
+                        name,
+                        email,
+                        password
+                    }).then(response =>{
+                        console.log("data updated in mongodb")
+                    })
+                    .catch(error=>console.log(error))
+                }).catch(err=>{
                 console.log(err);
                 toast("unable to create user please try again.")
-            })
+        })
     }
 
     const loginUser = (event)=>{
@@ -59,9 +69,11 @@ const Home = (props)=>{
                 password
             ).then(response=>{
             console.log("processed succesfully");
-            localStorage.setItem("user",{
-                ...response, _id:response.$id
-            })
+            localStorage.setItem("user",JSON.stringify({
+                _id:response.$id,
+                name:response.name,
+                email:response.email
+            }))
             navigate("/dashboard");
             
         })

@@ -3,6 +3,6 @@
  */
 
 export const API = {
-    userApi: "https://mytodobackend-production.up.railway.app",
-    todoApi: "https://mytodobackend-production.up.railway.app/api"
+    userApi: "http://localhost:4000",
+    todoApi: "http://localhost:4000/api"
 }

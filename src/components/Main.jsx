@@ -29,6 +29,8 @@ const Main = ()=>{
             console.log(response);
             setUser(response);
         })
+    },[]);
+    useEffect(()=>{
         if(user){
             setIsAuthenticated(true)
             console.log("authenticated")
@@ -43,7 +45,7 @@ const Main = ()=>{
             toast(`Hey Welcome ${user.name}`);
         }
 
-    }, []);
+    }, [user]);
 
     if(!isAuthenticated){
         
@@ -61,10 +63,12 @@ const Main = ()=>{
     }
     const signOut = async ()=>{
         try {
-            await account.deleteSession();
+            await account.deleteSession("current");
+            localStorage.removeItem('user')
             navigate("/");
         } catch (error) {
             toast("Somthing went wrong please try again");
+            console.log(error)
         }
     }
 
